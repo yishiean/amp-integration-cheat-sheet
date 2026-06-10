@@ -377,7 +377,7 @@
   /* ---------- scroll to top ---------- */
   var scrollTopBtn = document.getElementById("scrollTop");
   window.addEventListener("scroll", function () {
-    scrollTopBtn.classList.toggle("visible", window.scrollY > 400);
+    scrollTopBtn.classList.toggle("visible", window.scrollY > 200);
   }, { passive: true });
   scrollTopBtn.addEventListener("click", function () {
     window.scrollTo({ top: 0, behavior: "smooth" });
