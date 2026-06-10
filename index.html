@@ -325,7 +325,22 @@
     .codeblock{ background:#fff; border:1px solid var(--border-subtle); }
     .codeblock code, .codeblock .lang{ color:var(--amp-gray-90); }
     .topbar, .hero{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .scroll-top{ display:none !important; }
   }
+
+  /* ============ SCROLL TO TOP ============ */
+  .scroll-top{
+    position:fixed; bottom:32px; right:32px; z-index:100;
+    width:44px; height:44px; border-radius:50%;
+    background:var(--amp-black); color:#fff; border:none; cursor:pointer;
+    display:grid; place-items:center;
+    box-shadow:0 4px 16px rgba(0,0,0,0.22);
+    opacity:0; transform:translateY(10px); pointer-events:none;
+    transition:opacity var(--dur-med) var(--ease-out), transform var(--dur-med) var(--ease-out), background var(--dur-fast);
+  }
+  .scroll-top.visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .scroll-top:hover{ background:var(--amp-blue); }
+  .scroll-top svg{ width:18px; height:18px; }
 </style>
 </head>
 <body>
@@ -424,6 +439,10 @@
 </div>
 
 <!-- footer is appended to main via JS-free markup below script for ordering -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top" title="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
 <script src="cheatsheet-data.js"></script>
 <script src="cheatsheet-sections.js"></script>
 <script src="cheatsheet-app.js"></script>

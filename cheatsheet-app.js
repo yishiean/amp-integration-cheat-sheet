@@ -373,4 +373,13 @@
     var top = el.getBoundingClientRect().top + window.scrollY - 96;
     window.scrollTo({ top: top, behavior: "smooth" });
   });
+
+  /* ---------- scroll to top ---------- */
+  var scrollTopBtn = document.getElementById("scrollTop");
+  window.addEventListener("scroll", function () {
+    scrollTopBtn.classList.toggle("visible", window.scrollY > 400);
+  }, { passive: true });
+  scrollTopBtn.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 })();
