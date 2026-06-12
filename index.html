@@ -356,29 +356,32 @@
     .sec-intro{ font-size:13px; }
     .subsection h3{ font-size:14px; }
 
-    /* ---- Tables → card layout ---- */
+    /* ---- Tables → card layout (exclude param tables inside drilldowns) ---- */
     .tbl-wrap{ border-radius:var(--radius-md); overflow-x:hidden; }
-    table.tbl thead{ display:none; }
-    table.tbl tbody tr{
+    table.tbl:not(.tbl-param) thead{ display:none; }
+    table.tbl:not(.tbl-param) tbody tr{
       display:block; padding:12px 14px;
       border-bottom:1px solid var(--amp-gray-20);
     }
-    table.tbl tbody tr:last-child{ border-bottom:none; }
-    table.tbl tbody tr:hover{ background:none; }
-    table.tbl tbody td{
+    table.tbl:not(.tbl-param) tbody tr:last-child{ border-bottom:none; }
+    table.tbl:not(.tbl-param) tbody tr:hover{ background:none; }
+    table.tbl:not(.tbl-param) tbody td{
       display:flex; justify-content:space-between; align-items:flex-start;
       gap:12px; padding:5px 0; border:none; font-size:13px;
       width:100%;
     }
-    table.tbl tbody td::before{
+    table.tbl:not(.tbl-param) tbody td::before{
       content:attr(data-label);
       font-size:10px; font-weight:600; letter-spacing:0.08em;
       text-transform:uppercase; color:var(--amp-gray-50);
       min-width:60px; flex-shrink:0; padding-top:3px;
     }
     /* hide rank & category columns — low value on small screens */
-    table.tbl td[data-label="#"]{ display:none; }
-    table.tbl td[data-label="Cloud"]{ display:none; }
+    table.tbl:not(.tbl-param) td[data-label="#"]{ display:none; }
+    table.tbl:not(.tbl-param) td[data-label="Cloud"]{ display:none; }
+    /* param tables: horizontal scroll instead */
+    .tbl-wrap:has(.tbl-param){ overflow-x:auto; }
+    table.tbl-param{ min-width:480px; font-size:12px; }
     /* Section goto link — full width on mobile */
     .col-qgo{ width:auto; }
 
