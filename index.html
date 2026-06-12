@@ -379,6 +379,7 @@
     /* hide rank & category columns — low value on small screens */
     table.tbl:not(.tbl-param) td[data-label="#"]{ display:none; }
     table.tbl:not(.tbl-param) td[data-label="Cloud"]{ display:none; }
+    table.tbl:not(.tbl-param) td[data-label="Category"]{ display:none; }
     /* param tables: horizontal scroll instead */
     .tbl-wrap:has(.tbl-param){ overflow-x:auto; }
     table.tbl-param{ min-width:480px; font-size:12px; }
@@ -408,6 +409,15 @@
     /* hub chips */
     .hub-chip{ font-size:12px; padding:8px 10px; }
     .hub-chip .ex{ display:none; }
+
+    /* docs links — stack left so they don't sit under the scroll-to-top button */
+    table.tbl:not(.tbl-param) td[data-label="Docs"]{
+      flex-direction:column; align-items:flex-start; gap:6px;
+    }
+    table.tbl:not(.tbl-param) td[data-label="Docs"]::before{ padding-top:0; }
+    .docs{ flex-wrap:wrap; }
+    /* extra bottom padding so last row's docs aren't clipped by fixed button */
+    main{ padding-bottom:90px; }
 
     /* callouts */
     .callout{ padding:10px 13px; font-size:12.5px; }
