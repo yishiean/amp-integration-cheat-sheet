@@ -307,12 +307,97 @@
   .legend-inline .li{ display:flex; align-items:center; gap:7px; }
 
   /* ============ RESPONSIVE ============ */
+
+  /* ---- Tablet (≤980px) ---- */
   @media (max-width:980px){
     .layout{ grid-template-columns:1fr; }
     nav.sidenav{ display:none; }
     .hub{ grid-template-columns:1fr; }
     .hub-center{ flex-direction:row; }
     .topbar, .hero, .toolbar, main{ padding-left:22px; padding-right:22px; }
+    .toolbar{ flex-wrap:wrap; gap:10px; }
+    .search-wrap{ min-width:0; flex:1 1 240px; }
+  }
+
+  /* ---- Mobile (≤640px) ---- */
+  @media (max-width:640px){
+
+    /* topbar */
+    .topbar{ flex-wrap:wrap; padding:16px 18px 18px; gap:14px; align-items:flex-start; }
+    .topbar h1{ font-size:20px; }
+    .topbar .meta{
+      border-left:none; padding-left:0;
+      border-top:1px solid rgba(255,255,255,0.12); padding-top:12px;
+      text-align:left; width:100%;
+    }
+
+    /* hero */
+    .hero{ padding:24px 18px 28px; }
+    .hero .lead p{ font-size:15px; }
+    .hub{ gap:14px; }
+    .hub-center{ flex-direction:column; align-items:center; gap:8px; }
+    .arrowrow{ display:none; }
+    .hub-node{ padding:16px 20px; }
+
+    /* toolbar */
+    .toolbar{ flex-direction:column; align-items:stretch; padding:10px 18px; gap:8px; }
+    .search-wrap{ max-width:100%; }
+    .pills{ flex-wrap:wrap; gap:6px; }
+    #resultcount{ margin-left:0; }
+
+    /* main */
+    main{ padding:4px 14px 80px; }
+    .sec{ padding-top:32px; }
+    .sec-head{ flex-direction:column; gap:2px; }
+    .sec-heading h2{ font-size:20px; }
+    .sec-intro{ font-size:13px; }
+    .subsection h3{ font-size:14px; }
+
+    /* ---- Tables → card layout ---- */
+    .tbl-wrap{ border-radius:var(--radius-md); overflow-x:hidden; }
+    table.tbl thead{ display:none; }
+    table.tbl tbody tr{
+      display:block; padding:12px 14px;
+      border-bottom:1px solid var(--amp-gray-20);
+    }
+    table.tbl tbody tr:last-child{ border-bottom:none; }
+    table.tbl tbody tr:hover{ background:none; }
+    table.tbl tbody td{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:12px; padding:5px 0; border:none; font-size:13px;
+      width:100%;
+    }
+    table.tbl tbody td::before{
+      content:attr(data-label);
+      font-size:10px; font-weight:600; letter-spacing:0.08em;
+      text-transform:uppercase; color:var(--amp-gray-50);
+      min-width:60px; flex-shrink:0; padding-top:3px;
+    }
+    /* hide rank & category columns — low value on small screens */
+    table.tbl td[data-label="#"]{ display:none; }
+    table.tbl td[data-label="Cloud"]{ display:none; }
+    /* Section goto link — full width on mobile */
+    .col-qgo{ width:auto; }
+
+    /* drilldowns */
+    .dd-ep{ display:none; }
+    .dd-head{ gap:8px; padding:12px 14px; flex-wrap:wrap; }
+    .dd-title{ font-size:14px; }
+    .dd-meta{ gap:6px 16px; font-size:12px; }
+    .dd-inner{ padding:4px 14px 18px; }
+    .codeblock pre{ padding:28px 12px 12px; overflow-x:auto; }
+    .codeblock pre code{ font-size:11px; }
+
+    /* callouts */
+    .callout{ font-size:12.5px; }
+
+    /* footer */
+    .docfoot{ flex-direction:column; gap:10px; }
+    .legend-inline{ flex-direction:column; gap:8px; }
+
+    /* scroll-to-top */
+    .scroll-top{ bottom:18px; right:14px; width:40px; height:40px; }
+    .scroll-top svg{ width:16px; height:16px; }
   }
 
   @media print{
