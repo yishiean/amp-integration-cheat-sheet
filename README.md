@@ -1,25 +1,48 @@
-# CODING AGENTS: READ THIS FIRST
+# Amplitude API & Integration Ecosystem — Cheat Sheet
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+An interactive, Amplitude-branded reference for how data moves **in and out** of Amplitude — built for Product Managers and Engineers.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+**Live view:** open `project/index.html` in a browser, or enable GitHub Pages (see below).
 
-## What you should do — IMPORTANT
+## What's inside
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+- **Hub overview** — the "data in → Amplitude → data out" mental model
+- **Live search + direction filters** (↓ In / ↑ Out / ⇄ Both) across every API and partner
+- **Quick Reference** + Sections 1–6 and **3b (bidirectional partners)**
+- **5 API drill-downs** with syntax-highlighted request/response samples
+- Comparison + decision tables, sticky section nav, print-friendly layout
+- **Mobile responsive** — works on phones and tablets
 
-**Read `project/Amplitude Integrations Cheat Sheet.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## Project structure
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+```
+project/
+  index.html                              # entry point (GitHub Pages serves this)
+  Amplitude Integrations Cheat Sheet.html # same content, descriptive filename
+  cheatsheet-data.js                      # quick-reference data
+  cheatsheet-sections.js                  # all section content
+  cheatsheet-app.js                       # rendering, search/filter, syntax highlighting
+  assets/
+    colors_and_type.css                   # Amplitude design tokens
+    fonts/                                # Gellix (brand typeface)
+    logo_amplitude_*.svg                  # brand logos
+```
 
-## About the design files
+## Run locally
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+No build step. Either open `project/index.html` directly, or serve the folder:
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+```bash
+python3 -m http.server 8000   # then visit http://localhost:8000/project/
+```
 
-## Bundle contents
+## Publish with GitHub Pages
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Amplitude Integrations Cheat Sheet` project files (HTML prototypes, assets, components)
+1. Push this repo to GitHub.
+2. Go to **Settings → Pages → Build and deployment → Source: Deploy from a branch**.
+3. Branch: `main`, folder: `/ (root)`. Save.
+4. Your site goes live at `https://<username>.github.io/<repo>/project/`.
+
+---
+
+*Brand styling follows the Amplitude design system. Usage rankings and example data are point-in-time and sourced from the originating cheat-sheet document.*
