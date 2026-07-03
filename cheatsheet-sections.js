@@ -284,23 +284,22 @@ curl --request GET 'https://amplitude.com/api/5/cohorts/request/{request_id}/fil
         {rank:9, dir:"in", partner:"Google Tag Manager", cat:"Marketing Analytics", what:"Triggers Amplitude SDK calls via GTM tags on web properties — client-side and server-side.", use:"Marketing teams instrument Amplitude on landing pages or web funnels without engineering changes.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/google-tag-manager")]}
       ]
     },
-    { type:"subsection", id:"sub-warehouse-sources", label:"Warehouse & Cloud Storage Sources", note:"A distinct ingestion path — used by data and engineering teams to bring offline, CRM, or computed data into Amplitude that SDKs and event streams can't capture. Active org counts are in the 10–20 range: an enterprise expansion motion — low breadth, high strategic depth." },
+    { type:"subsection", id:"sub-wh-sources", label:"Warehouse / Data Lake Sources", note:"SQL query engines — used by data and engineering teams to bring offline, CRM, or computed data into Amplitude via scheduled SQL syncs. Active org counts are in the 10–20 range: an enterprise expansion motion — low breadth, high strategic depth." },
     { type:"table",
       columns:[
         {key:"rank", label:"#", w:"rank"},
         {key:"partner", label:"Partner", w:"partner"},
         {key:"cat", label:"Cloud", w:"cat"},
         {key:"dir", label:"Dir", w:"dir"},
+        {key:"freq", label:"Sync Freq", w:"freq"},
         {key:"what", label:"What it does", w:"what"},
         {key:"use", label:"Example use case", w:"use"},
         {key:"docs", label:"Docs", w:"docs"}
       ],
       rows:[
-        {rank:1, dir:"in", partner:"Amazon S3", cat:"AWS", what:"Import event or user property data from S3 buckets on a scheduled or event-notification-triggered sync.", use:"Load server-side computed events or CRM exports dropped into S3 by your data pipeline.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/amazon-s3")]},
-        {rank:2, dir:"in", partner:"Snowflake", cat:"AWS / Azure / GCP", what:"Query Snowflake tables via SQL and import results as events or user properties on a configurable schedule.", use:"Bring subscription status, LTV tier, or offline purchase data into user profiles to enrich segmentation.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/snowflake")]},
-        {rank:3, dir:"in", partner:"Google BigQuery", cat:"GCP", what:"Run SQL against BigQuery and import results as events or user/group properties on a recurring sync.", use:"Pull data science model outputs or aggregated server-side metrics into Amplitude to enrich cohort definitions.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/bigquery")]},
-        {rank:4, dir:"in", partner:"Google Cloud Storage", cat:"GCP", what:"Import event or user property data from files stored in a GCS bucket.", use:"GCP-native data teams drop formatted event files into GCS — Amplitude picks them up on a schedule.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/google-cloud-storage")]},
-        {rank:5, dir:"in", partner:"Databricks", cat:"AWS / Azure / GCP", what:"Import data from a Databricks Lakehouse using SQL-based scheduled syncs.", use:"Push computed user segments or enriched event data directly into Amplitude from Databricks.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/databricks")]}
+        {rank:1, dir:"in", partner:"Snowflake", cat:"AWS / Azure / GCP", freq:"Configurable (5 min – monthly)", what:"Query Snowflake tables via SQL and import results as events or user properties on a configurable schedule.", use:"Bring subscription status, LTV tier, or offline purchase data into user profiles to enrich segmentation.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/snowflake")]},
+        {rank:2, dir:"in", partner:"Google BigQuery", cat:"GCP", freq:"Configurable (5 min – monthly)", what:"Run SQL against BigQuery and import results as events or user/group properties on a recurring sync.", use:"Pull data science model outputs or aggregated server-side metrics into Amplitude to enrich cohort definitions.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/bigquery")]},
+        {rank:3, dir:"in", partner:"Databricks", cat:"AWS / Azure / GCP", freq:"Configurable (per data type)", what:"Import data from a Databricks Lakehouse using SQL-based scheduled syncs.", use:"Push computed user segments or enriched event data directly into Amplitude from Databricks.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/databricks")]}
       ]
     },
     { type:"subsection", label:"Warehouse Ingestion: Events vs User Properties", note:"The nuances data teams keep tripping over." },
@@ -313,9 +312,38 @@ curl --request GET 'https://amplitude.com/api/5/cohorts/request/{request_id}/fil
         {key:"nuance", label:"Key nuance", w:"cmp"}
       ],
       rows:[
-        {connector:"Amazon S3", imports:"Events, User Properties, Group Properties", events:"Event import + mutation via a converter file. Supports Append Only and Mirror Sync (insert/update/delete).", props:"<code>$skip_user_properties_sync</code> defaults to <code>true</code> — historical imports will <b>not</b> update user properties unless set to <code>false</code>. Group properties require <code>groups</code> + <code>group_properties</code> objects.", nuance:"Events ingested via Mirror Sync cannot be exported through event streaming destinations. Use Append Only if you need downstream streaming."},
         {connector:"Snowflake", imports:"Events, User Properties, Group Properties, Profiles", events:"Four strategies: Append Only (includes enrichment — ID resolution, attribution, location), Mirror Sync (disables enrichment), Timestamp, and Full Sync.", props:"Sync User/Group Properties are optional toggles on Event imports. Time-ordered syncing is <b>not</b> guaranteed — unlike the Identify API.", nuance:"Max batch: 1B events per query. Max runtime: 12 hours. Mirror Sync supports CDC change tracking natively."},
-        {connector:"Databricks", imports:"Events, User Properties, Group Properties, Profiles", events:"SQL-based mapping with Append-Only ingestion. Uses Databricks' native Change Data Feed (CDF) for Mirror Sync.", props:"Supports the VARIANT type — map user, event, and group properties from semi-structured / nested JSON directly.", nuance:"Sync frequency varies independently by data type — Events, User Properties, Group Properties, and Profiles each have their own cadence."},
+        {connector:"Databricks", imports:"Events, User Properties, Group Properties, Profiles", events:"SQL-based mapping with Append-Only ingestion. Uses Databricks' native Change Data Feed (CDF) for Mirror Sync.", props:"Supports the VARIANT type — map user, event, and group properties from semi-structured / nested JSON directly.", nuance:"Sync frequency varies independently by data type — Events, User Properties, Group Properties, and Profiles each have their own cadence."}
+      ]
+    },
+    { type:"subsection", id:"sub-cs-sources", label:"Cloud Storage Sources", note:"File/object storage connectors — for teams that drop formatted event or property files into buckets as part of their data pipeline. Scheduled or event-triggered ingestion." },
+    { type:"table",
+      columns:[
+        {key:"rank", label:"#", w:"rank"},
+        {key:"partner", label:"Partner", w:"partner"},
+        {key:"cat", label:"Cloud", w:"cat"},
+        {key:"dir", label:"Dir", w:"dir"},
+        {key:"freq", label:"Sync Freq", w:"freq"},
+        {key:"what", label:"What it does", w:"what"},
+        {key:"use", label:"Example use case", w:"use"},
+        {key:"docs", label:"Docs", w:"docs"}
+      ],
+      rows:[
+        {rank:1, dir:"in", partner:"Amazon S3", cat:"AWS", freq:"Scheduled or event-triggered", what:"Import event or user property data from S3 buckets on a scheduled or event-notification-triggered sync.", use:"Load server-side computed events or CRM exports dropped into S3 by your data pipeline.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/amazon-s3")]},
+        {rank:2, dir:"in", partner:"Google Cloud Storage", cat:"GCP", freq:"Scheduled or event-triggered", what:"Import event or user property data from files stored in a GCS bucket.", use:"GCP-native data teams drop formatted event files into GCS — Amplitude picks them up on a schedule.", docs:[L("Docs","https://amplitude.com/docs/data/source-catalog/google-cloud-storage")]}
+      ]
+    },
+    { type:"subsection", label:"Cloud Storage Ingestion: Events vs User Properties", note:"Same converter architecture across S3 and GCS — nuances worth knowing before you configure." },
+    { type:"table", variant:"compare",
+      columns:[
+        {key:"connector", label:"Connector", w:"conn"},
+        {key:"imports", label:"What you can import", w:"cmp"},
+        {key:"events", label:"How events are handled", w:"cmp"},
+        {key:"props", label:"User & group properties", w:"cmp"},
+        {key:"nuance", label:"Key nuance", w:"cmp"}
+      ],
+      rows:[
+        {connector:"Amazon S3", imports:"Events, User Properties, Group Properties", events:"Event import + mutation via a converter file. Supports Append Only and Mirror Sync (insert/update/delete).", props:"<code>$skip_user_properties_sync</code> defaults to <code>true</code> — historical imports will <b>not</b> update user properties unless set to <code>false</code>. Group properties require <code>groups</code> + <code>group_properties</code> objects.", nuance:"Events ingested via Mirror Sync cannot be exported through event streaming destinations. Use Append Only if you need downstream streaming."},
         {connector:"Google Cloud Storage", imports:"Events, User Properties, Group Properties", events:"Architecturally identical to S3 — same converter language, JSON path syntax, and Data Preview tool.", props:"Same <code>$skip_user_properties_sync = true</code> default as S3. Transformation rules can be applied per field before mapping.", nuance:"GCS import and export are independent connectors. Import supports events + user/group properties separately; export only sends event rows."}
       ]
     }
@@ -467,28 +495,59 @@ curl --request GET 'https://amplitude.com/api/5/cohorts/request/{request_id}/fil
         {dir:"out", api:"Session Replay API", methods:["GET"], what:"List session replays and retrieve the underlying replay event files programmatically.", use:"Exporting replay metadata for compliance/QA; surfacing relevant replays alongside support tickets or bug reports.", docs:[L("Docs","https://amplitude.com/docs/apis/analytics/session-replay")]}
       ]
     },
-    { type:"subsection", id:"sub-warehouse-exports", label:"Warehouse & Cloud Storage Exports", note:"Highest volume destinations globally. Ranked by unique orgs actively exporting (last 90 days rolling)." },
+    { type:"subsection", id:"sub-wh-exports", label:"Warehouse / Data Lake Exports", note:"Highest volume SQL-warehouse destinations globally. Ranked by unique orgs actively exporting (last 90 days rolling)." },
     { type:"table",
       columns:[
         {key:"rank", label:"#", w:"rank"},
         {key:"partner", label:"Partner", w:"partner"},
         {key:"cat", label:"Cloud", w:"cat"},
         {key:"dir", label:"Dir", w:"dir"},
+        {key:"freq", label:"Sync Freq", w:"freq"},
         {key:"what", label:"What it does", w:"what"},
         {key:"use", label:"Example use case", w:"use"},
         {key:"docs", label:"Docs", w:"docs"}
       ],
       rows:[
-        {rank:1, dir:"out", partner:"Amazon S3", cat:"AWS", what:"Continuously exports Amplitude event data and merged user IDs to an S3 bucket hourly.", use:"S3 as the landing zone before loading into the warehouse pipeline.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/amazon-s3")]},
-        {rank:2, dir:"out", partner:"Google BigQuery", cat:"GCP", what:"Streams Amplitude event data directly into a BigQuery dataset for SQL-based analysis.", use:"Query raw events alongside CRM and transaction data for unified reporting.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/google-bigquery")]},
-        {rank:3, dir:"out", partner:"Snowflake", cat:"AWS / Azure / GCP", what:"Exports Amplitude event data to Snowflake on a recurring sync for warehouse-native analytics.", use:"Keep Amplitude as the collection layer and Snowflake as the query layer — no stack change.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/snowflake")]},
-        {rank:4, dir:"out", partner:"Amazon Redshift", cat:"AWS", what:"Exports Amplitude events to Redshift for SQL querying and BI tool integration.", use:"Teams running Tableau or Looker on Redshift can pull behavioral data into existing reporting.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/amazon-redshift")]},
-        {rank:5, dir:"out", partner:"Amazon Kinesis", cat:"AWS", what:"Streams Amplitude events in real time to Kinesis for event-driven architectures.", use:"Real-time fraud detection or personalization engines that need signals as they happen.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/amazon-kinesis-data-stream")]},
-        {rank:6, dir:"out", partner:"Google Cloud Storage", cat:"GCP", what:"Exports event data to GCS buckets on a recurring schedule.", use:"GCS as the landing zone before loading into BigQuery or Dataflow pipelines.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/google-cloud-storage")]},
-        {rank:7, dir:"out", partner:"Azure Blob Storage", cat:"Azure", what:"Exports Amplitude event data to Azure Blob on a scheduled basis.", use:"Route data into Azure Data Factory or Synapse pipelines.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/azure-blob-storage")]}
+        {rank:1, dir:"out", partner:"Snowflake", cat:"AWS / Azure / GCP", freq:"Hourly", what:"Exports Amplitude event data to Snowflake on a recurring sync for warehouse-native analytics.", use:"Keep Amplitude as the collection layer and Snowflake as the query layer — no stack change.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/snowflake")]},
+        {rank:2, dir:"out", partner:"Google BigQuery", cat:"GCP", freq:"Hourly", what:"Streams Amplitude event data directly into a BigQuery dataset for SQL-based analysis.", use:"Query raw events alongside CRM and transaction data for unified reporting.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/google-bigquery")]},
+        {rank:3, dir:"out", partner:"Amazon Redshift", cat:"AWS", freq:"Hourly", what:"Exports Amplitude events to Redshift for SQL querying and BI tool integration.", use:"Teams running Tableau or Looker on Redshift can pull behavioral data into existing reporting.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/amazon-redshift")]}
       ]
     },
-    { type:"subsection", label:"Warehouse Export: Events vs User Properties" },
+    { type:"subsection", label:"Warehouse Export: Events vs User Properties", note:"What's in the export — and what isn't." },
+    { type:"table", variant:"compare",
+      columns:[
+        {key:"connector", label:"Connector", w:"conn"},
+        {key:"exports", label:"What gets exported", w:"cmp"},
+        {key:"format", label:"Event data format", w:"cmp"},
+        {key:"props", label:"User property handling", w:"cmp"},
+        {key:"nuance", label:"Key nuance", w:"cmp"}
+      ],
+      rows:[
+        {connector:"Snowflake", exports:"Events + Merged IDs", format:"Structured Event table with recurring syncs. Optional filters. Each sync typically completes in 5–10 minutes.", props:"User properties travel inside the event row as a nested column — no dedicated table. Use the User Profile API for current state.", nuance:"One destination per data type per project. A separate Snowflake Data Share add-on exists — read-only, no custom clustering control."},
+        {connector:"Google BigQuery", exports:"Events + Merged IDs", format:"Same structure as S3/Snowflake — events as structured rows, optional filters, recurring hourly syncs.", props:"User properties embedded within event rows only — no standalone table.", nuance:"Source and destination are independent connectors. Import supports user/group properties separately; export only sends event rows."},
+        {connector:"Amazon Redshift", exports:"Events + Merged IDs", format:"Hourly export into Redshift tables. Same event-row structure as Snowflake and BigQuery.", props:"User properties embedded in event rows only — no dedicated table.", nuance:"Works best paired with BI tools (Tableau, Looker) already connected to Redshift. No separate user-properties table."}
+      ]
+    },
+    { type:"subsection", id:"sub-cs-exports", label:"Cloud Storage & Streaming Exports", note:"Object storage landing zones and real-time streaming. Ranked by unique orgs actively exporting (last 90 days rolling)." },
+    { type:"table",
+      columns:[
+        {key:"rank", label:"#", w:"rank"},
+        {key:"partner", label:"Partner", w:"partner"},
+        {key:"cat", label:"Cloud", w:"cat"},
+        {key:"dir", label:"Dir", w:"dir"},
+        {key:"freq", label:"Sync Freq", w:"freq"},
+        {key:"what", label:"What it does", w:"what"},
+        {key:"use", label:"Example use case", w:"use"},
+        {key:"docs", label:"Docs", w:"docs"}
+      ],
+      rows:[
+        {rank:1, dir:"out", partner:"Amazon S3", cat:"AWS", freq:"Hourly", what:"Continuously exports Amplitude event data and merged user IDs to an S3 bucket hourly.", use:"S3 as the landing zone before loading into the warehouse pipeline.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/amazon-s3")]},
+        {rank:2, dir:"out", partner:"Google Cloud Storage", cat:"GCP", freq:"Hourly", what:"Exports event data to GCS buckets on a recurring schedule.", use:"GCS as the landing zone before loading into BigQuery or Dataflow pipelines.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/google-cloud-storage")]},
+        {rank:3, dir:"out", partner:"Azure Blob Storage", cat:"Azure", freq:"Hourly", what:"Exports Amplitude event data to Azure Blob on a scheduled basis.", use:"Route data into Azure Data Factory or Synapse pipelines.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/azure-blob-storage")]},
+        {rank:4, dir:"out", partner:"Amazon Kinesis", cat:"AWS", freq:"Real-time", what:"Streams Amplitude events in real time to Kinesis for event-driven architectures.", use:"Real-time fraud detection or personalization engines that need signals as they happen.", docs:[L("Docs","https://amplitude.com/docs/data/destination-catalog/amazon-kinesis-data-stream")]}
+      ]
+    },
+    { type:"subsection", label:"Cloud Storage & Streaming Export: Events vs User Properties" },
     { type:"table", variant:"compare",
       columns:[
         {key:"connector", label:"Connector", w:"conn"},
@@ -499,9 +558,9 @@ curl --request GET 'https://amplitude.com/api/5/cohorts/request/{request_id}/fil
       ],
       rows:[
         {connector:"Amazon S3", exports:"Events + Merged IDs", format:"Zipped JSON, one event object per line, partitioned hourly. Optional event-level filters.", props:"No standalone user-properties export. User properties are embedded inside each event object as a point-in-time snapshot.", nuance:"Also exports a Merged IDs file — tracks when Amplitude merged two identities. Critical for downstream identity resolution."},
-        {connector:"Snowflake", exports:"Events + Merged IDs", format:"Structured Event table with recurring syncs. Optional filters. Each sync typically completes in 5–10 minutes.", props:"User properties travel inside the event row as a nested column — no dedicated table. Use the User Profile API for current state.", nuance:"One destination per data type per project. A separate Snowflake Data Share add-on exists — read-only, no custom clustering control."},
-        {connector:"Google BigQuery", exports:"Events + Merged IDs", format:"Same structure as S3/Snowflake — events as structured rows, optional filters, recurring hourly syncs.", props:"User properties embedded within event rows only — no standalone table.", nuance:"Source and destination are independent connectors. Import supports user/group properties separately; export only sends event rows."},
-        {connector:"Azure Blob Storage", exports:"Events + Merged IDs", format:"Exports event data and merged user data. Optional filters. Recurring syncs as often as hourly.", props:"Same pattern — user properties embedded in event rows only.", nuance:"Events and merged IDs can be exported to separate containers by completing the setup flow twice."}
+        {connector:"Google Cloud Storage", exports:"Events + Merged IDs", format:"Same zipped JSON structure as S3 — one event per line, partitioned hourly.", props:"User properties embedded in event rows only. GCS import and export are independent connectors.", nuance:"GCS export is the GCP-native equivalent of S3 Export — same format, hourly cadence, separate setup from the GCS source connector."},
+        {connector:"Azure Blob Storage", exports:"Events + Merged IDs", format:"Exports event data and merged user data. Optional filters. Recurring syncs as often as hourly.", props:"Same pattern — user properties embedded in event rows only.", nuance:"Events and merged IDs can be exported to separate containers by completing the setup flow twice."},
+        {connector:"Amazon Kinesis", exports:"Events (real-time stream)", format:"Individual event objects pushed to a Kinesis Data Stream as they are ingested — no batching, no delay.", props:"User properties embedded in each event object at the time of the event.", nuance:"Kinesis is the only export connector that is truly real-time. All other warehouse and cloud storage exports run on an hourly batch schedule."}
       ]
     },
     { type:"keyrule", text:"<b>Key rule across all warehouse exports:</b> user properties are never exported as a standalone table — only as a snapshot embedded in each event row at the time that event occurred. To retrieve the current state of a user's properties, use the <a href='https://amplitude.com/docs/apis/analytics/user-profile'>User Profile API</a> instead." },
